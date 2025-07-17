@@ -25,7 +25,11 @@ A GUI-based Student Management System built using **Python**, **Tkinter**, and *
 
 ## 📸 Screenshots
 
-> *Add screenshots here once available*
+### 🖥️ Main Interface
+![Main UI](frontend/assets/main_ui.png)
+
+### ➕ Add Student Form
+![Add Student](frontend/assets/add_student.png)
 
 ---
 
