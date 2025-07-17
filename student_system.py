@@ -1,8 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk #pip install pillow
-
 import mysql.connector
+from mysql.connector import Error
 from tkinter import messagebox
 
 
@@ -39,7 +39,7 @@ class student:
         
         #left frame
         data_left=LabelFrame(main_frame,bd=2,bg="white",relief=RIDGE,text="Student Details",font=("times new roman",15,"bold"),fg="black")
-        data_left.place(x=5,y=0,widt=350,height=670)
+        data_left.place(x=5,y=0,width=350,height=670)
         
         #current course information in left frame
         cc_left=LabelFrame(data_left,bd=2,bg="white",relief=RIDGE,text="Current Course Information",font=("times new roman",14,"bold"),fg="black")
@@ -98,7 +98,7 @@ class student:
         #student id label
         lbl_stuid=Label(si_left,text="Student ID:",font=("times new roman",13,"bold"),bg="white",fg="black")
         lbl_stuid.grid(row=1,column=0,padx=10,sticky=W)
-        txt_stuid=ttk.Entry(si_left,width=20,font=("times new roman",13,"bold"))
+        txt_stuid = ttk.Entry(si_left, textvariable=self.var_student_id, width=20, font=("times new roman",13,"bold"))
         txt_stuid.grid(row=1,column=1,padx=5,pady=5,sticky=W)
          
         #genders
@@ -257,8 +257,25 @@ class student:
             try:
                 conn=mysql.connector.connect(host="localhost",username="root",password="Mayank12@",database="datasystem")
                 my_cursur=conn.cursor()
-                my_cursur.execute=("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",(
-                    self.var_branch.get(),self.var_department.get(),self.var_year.get(),self.var_course.get(),self.var_semester.get(),self.var_student_id.get(),self.var_student_name.get(),self.var_gender.get(),self.var_date_of_birth.get(),self.var_branch_section.get(),self.var_phone_number.get(),self.var_address.get(),self.var_e_mail.get()))
+                my_cursur.execute(
+    "INSERT INTO student VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+    (
+        self.var_branch.get(),
+        self.var_department.get(),
+        self.var_year.get(),
+        self.var_course.get(),
+        self.var_semester.get(),
+        self.var_student_id.get(),
+        self.var_student_name.get(),
+        self.var_gender.get(),
+        self.var_date_of_birth.get(),
+        self.var_branch_section.get(),
+        self.var_phone_number.get(),
+        self.var_address.get(),
+        self.var_e_mail.get()
+    )
+)
+
                 conn.commit()
                 self.fetch_data()
                 conn.close()
@@ -268,7 +285,18 @@ class student:
                 
     #fetch function
     def fetch_data(self):
-        conn=mysql.connector.connect(host="locals.host",username="root",password="Mayank12@",database="datasystem")
+        try:
+            conn = mysql.connector.connect(
+                host="localhost",
+                user="root",               # ✅ not 'username'
+                password="Mayank12@",      # ✅ your password
+                database="datasystem"      # ✅ your database name
+            )
+            if conn.is_connected():
+                print("Connection successful")
+        except Error as e:
+            print(f"Error while connecting to MySQL: {e}")
+
         my_cursur=conn.cursor()
         my_cursur.execute=("select * from student")
         data=my_cursur.fetchall()
@@ -283,7 +311,7 @@ class student:
     #getcursor()
     def get_cursor(self,event=""): 
         cursor_row = self.table.focus()
-        content=self.table.items(cursor_row)
+        content=self.table.item(cursor_row)
         data=content["values"]
         
         self.var_branch.set(data[0])
@@ -310,7 +338,22 @@ class student:
                 if update>0:
                     conn=mysql.connector.connect(host="localhost",username="root",password="Mayank12@",database="datasystem")
                     my_cursur=conn.cursor()
-                    my_cursur.execute=("update student set branch=%s,department=%s,year=%s,course=%s,semester=%s,student_id=%s,student_name=%s,gender=%s,date_of_birth=%s,branch_section=%s,phone_number=%s,address=%s,e_mail=%s where student_id=%s",(self.var_branch.get(),self.var_department,self.var_year,self.var_course,self.var_semester,self.var_student_name,self.var_gender,self.var_date_of_birth,self.var_branch_section,self.phone_number,self.address,self.e_mail,self.var_student_id))
+                    my_cursur.execute("UPDATE student SET branch=%s, department=%s, ... WHERE student_id=%s", (
+    self.var_branch.get(),
+    self.var_department.get(),
+    self.var_year.get(),
+    self.var_course.get(),
+    self.var_semester.get(),
+    self.var_student_name.get(),
+    self.var_gender.get(),
+    self.var_date_of_birth.get(),
+    self.var_branch_section.get(),
+    self.var_phone_number.get(),
+    self.var_address.get(),
+    self.var_e_mail.get(),
+    self.var_student_id.get()
+))
+
                 else:
                     if not update:
                         return
@@ -333,7 +376,7 @@ class student:
                 if delete>0:
                     conn=mysql.connector.connect(host="localhost",username="root",password="Mayank12@",database="datasystem")
                     my_cursur=conn.cursor()
-                    my_cursur.execute=("delete from student where student_id=%s",(self.var_student_id.get()))
+                    my_cursur.execute("DELETE FROM student WHERE student_id=%s", (self.var_student_id.get(),))
                 else:
                     if not delete:
                         return
@@ -363,27 +406,49 @@ class student:
         
     #search data
     def search_data(self):
-        if self.var_com_search.get()=="" or self.var_search.get()=="":
-            messagebox.showerror("Error","Please fill all the fields")
+        if self.var_com_search.get() == "" or self.var_search.get() == "":
+            messagebox.showerror("Error", "Please fill all the fields")
         else:
             try:
-                conn=mysql.connector.connect(host="localhost",username="root",password="Mayank12@",database="datasystem")
-                my_cursur=conn.cursor()
-                my_cursur.execute=("select * from student where %s=%s",(self.var_com_search.get(),self.var_search.get()))  
-                #at this the command is used is this  "select * from student where "+str(self.var_search.get())+" LIKE '%"+str(self.var_search.get())+"'%"
-                #(agar iss command ke use krne par error to where ke baad se space remove karke check kafr skte hai)
-                data=my_cursur.fetchall()
-                if len(data)!=0:
+                # Allowed fields (must match database column names)
+                column_map = {
+                    "Name": "student_name",
+                    "Student ID": "student_id",
+                    "Gender": "gender",
+                    "Date of Birth": "date_of_birth",
+                    "Branch": "branch",
+                    "Phone No": "phone_number",
+                    "Address": "address",
+                    "Email": "e_mail"
+                }
+
+                selected_field = self.var_com_search.get()
+                if selected_field not in column_map:
+                    messagebox.showerror("Error", "Invalid search option")
+                    return
+
+                query_col = column_map[selected_field]
+
+                conn = mysql.connector.connect(host="localhost", username="root", password="Mayank12@", database="datasystem")
+                my_cursur = conn.cursor()
+                sql = f"SELECT * FROM student WHERE {query_col} LIKE %s"
+                value = ("%" + self.var_search.get() + "%",)
+                my_cursur.execute(sql, value)
+
+                data = my_cursur.fetchall()
+                if data:
                     self.table.delete(*self.table.get_children())
                     for row in data:
-                        self.table.insert("",END,values=row)
-                        
+                        self.table.insert("", END, values=row)
+                else:
+                    messagebox.showinfo("Info", "No matching records found")
+
                 conn.commit()
                 conn.close()
-                messagebox.showinfo("Success","Data searched successfully",parent=self.root)
-                
+
             except Exception as es:
-                messagebox.showerror("error",f"due to:{str(es)}",parent=self.root)
+                messagebox.showerror("Error", f"Due to: {str(es)}", parent=self.root)
+
 #for connecting database firsty know what is your username.
 #1)for input the data from frontend change the exact username in add function
 #2)for connect backend and frontend run the fetch function statement just above the all fuctions
