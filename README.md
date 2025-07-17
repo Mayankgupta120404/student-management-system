@@ -1,21 +1,40 @@
-# Student Management System 🧑‍🎓
+# 🎓 Student Management System
 
-A Python-based GUI application to manage student records using **Tkinter** and **MySQL**.
+A GUI-based Student Management System built using **Python**, **Tkinter**, and **MySQL**. It allows users to perform operations like adding, updating, deleting, and searching student records in a user-friendly interface.
 
-## 🔧 Features
+---
 
-- Add, Update, Delete, Reset student records
-- Search students by different filters
-- User-friendly Tkinter interface
-- MySQL database integration
+## 💻 Tech Stack
 
-## 🖥️ Technologies Used
+- **Frontend**: Python `Tkinter` (GUI)
+- **Backend**: `MySQL`
+- **Other Libraries**: `Pillow` (for image handling)
 
-- Python
-- Tkinter
-- MySQL
-- Pillow (for images)
+---
 
-## 🚀 How to Run
+## ✨ Features
 
-1. Install required packages:
+- ➕ Add New Student
+- 🔁 Update Existing Details
+- ❌ Delete Student Record
+- 🔍 Search Functionality
+- 📋 View All Students in a Table
+- 📸 Student Photo Integration (via image path)
+
+---
+
+## 📸 Screenshots
+
+> *Add screenshots here once available*
+
+---
+
+## 🚀 Getting Started
+
+### 🔧 Requirements
+
+- Python 3.x
+- MySQL Server
+- Required Python libraries:
+  ```bash
+  pip install pillow mysql-connector-python
